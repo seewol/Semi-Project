@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="bookMapper">
+	
+	<insert id="wishBookInsert">
+		insert into book_wish
+		values(seq_wish_no.nextval, ${mNo}, #{title}, #{author}, #{publisher}, #{price}, #{etc}, #{date})
+	</insert>
+	
+	<resultMap type="Book" id="bookResultSet">
+		<id column="BD_NO" property="bookNumber"/>
+		<result column="ISBN" property="bookISBN"/>
+		<result column="RESIST_DATE" property="resistDate"/>
+		<result column="IS_RENTAL" property="isRental"/>
+		<result column="B_NAME" property="bookName"/>
+		<result column="SUMMARY" property="summary"/>
+		<result column="GM_NAME" property="gmName"/>
+		<result column="GS_NAME" property="gsName"/>
+		<result column="AUTHOR" property="author"/>
+		<result column="PUBLISHER" property="publisher"/>
+		<result column="PUBLICATION" property="publication"/>
+		<result column="B_COUNT" property="bookCount"/>
+		<result column="B_IMAGE" property="bookImage"/>
+		<result column="STARS" property="stars"/>
+	</resultMap>
+	
+	<select id="selectNewBookList" resultMap="bookResultSet">
+		<![CDATA[
+			select *
+			from (select *
+				  from v_book
+				  where bd_no > 0
+				  order by publication desc
+				  ) 
+			where rownum < 4 
+		]]> 
+	</select>
+	
+	<select id="selectHotBookList" resultMap="bookResultSet">
+		<![CDATA[
+			select * 
+			from v_book
+			where isbn in (select isbn
+			               from (select isbn, count(*) "rentalCount"
+			                     from book_check
+			                     where bd_no > 0
+			                     group by isbn
+			                     order by "rentalCount" desc)
+			               where rownum < 4)              
+		]]> 
+	</select>
+	
+	<select id="getSearchBookListCount" resultType="_int">
+		select count(*)
+		from v_book
+		<if test="category == 'all'">
+			where b_name like '%${query}%' or author like '%${query}%' or publisher like '%${query}%'
+		</if>
+		<if test="category != 'all'">
+			where ${category} like '%${query}%'
+		</if>
+	</select>
+	
+	<select id="searchBookList" resultMap="bookResultSet">
+		select *
+		from v_book
+		<if test="category == 'all'">
+			where b_name like '%${query}%' or author like '%${query}%' or publisher like '%${query}%'
+			order by b_name asc
+		</if>
+		<if test="category != 'all'">
+			where ${category} like '%${query}%'
+			<if test="order == 'bd_no'">
+				order by bd_no desc
+			</if>
+			<if test="order == 'bd_nolow'">
+				order by bd_no asc
+			</if>
+			<if test="order == 'stars'">
+				order by stars desc nulls last
+			</if>
+			<if test="order == 'starslow'">
+				order by stars asc nulls first
+			</if>
+			<if test="order == 'desc'">
+				order by ${category} desc
+			</if>
+			<if test="order == 'asc'">
+				order by ${category} asc
+			</if>
+		</if>
+	</select>
+	
+	<insert id="insertRentalResult">
+		insert into book_check 
+		values(seq_book_check_no.nextval, ${memberNumber}, ${bookNumber}, sysdate, (sysdate + 14), null, default)
+	</insert>
+	
+	<update id="updateRentalResult">
+	update book_detail
+	set is_rental = 'Y'
+	where bd_no = ${bookNumber}
+	</update>
+	
+	<insert id="insertHeart">
+		insert into heart values(seq_heart_no.nextval, #{bookISBN}, ${memberNumber})
+	</insert>
+	
+	<delete id="deleteHeart">
+		delete from heart
+		where isbn  = #{bookISBN} and m_no = ${memberNumber}
+	</delete>
+	
+	<select id="heartList" resultType="string">
+		select isbn
+		from heart
+		where m_no = ${memberNumber}
+	</select>
+	
+	<select id="rentalList" resultType="_int">
+		select bd_no
+		from book_check
+		where is_return = 'N' and m_no = ${memberNumber}
+	</select>
+	
+	<update id="returnResultBC">
+		update book_check
+		set is_return = 'Y', returndate = sysdate
+		where m_no = ${memberNumber} and bd_no = ${bookNumber}
+	</update>
+	
+	<update id="returnResultBD">
+	update book_detail
+	set is_rental = 'N'
+	where bd_no = ${bookNumber}
+	</update>
+	
+	<select id="getMyBookListCount" resultType="_int">
+		select count(*)
+		from book_check
+		where m_no = ${mNo}
+	</select>
+	
+	<select id="myBookList" resultMap="bookCheckResultSet">
+		select *
+		from v_bookcheck
+		where m_no = ${mNo}	
+		order by rentdate desc 
+	</select>
+	
+	<resultMap type="BookCheck" id="bookCheckResultSet">
+		<id column="RENT_NO" property="rentNumber"/>
+		<result column="M_NO" property="memberNumber"/>
+		<result column="BD_NO" property="bdNumber"/>
+		<result column="RENTDATE" property="rentDate"/>
+		<result column="DUEDATE" property="dueDate"/>
+		<result column="RETURNDATE" property="returnDate"/>
+		<result column="IS_RETURN" property="isReturn"/>
+		<result column="BD_NO" property="bookNumber"/>
+		<result column="B_NAME" property="bookName"/>
+		<result column="AUTHOR" property="author"/>
+		<result column="PUBLISHER" property="publisher"/>
+		<result column="B_IMAGE" property="bookImage"/>
+	</resultMap>
+	
+	<select id="checkIsRental" resultType="_int">
+		select count(*)
+		from book_check
+		where m_no = ${memberNumber} and is_return = 'N'
+	</select>
+	
+	<select id="getMyHeartBookListCount" resultType="_int">
+		select count(*)
+		from heart
+		where m_no = ${mNo}	
+	</select>
+	
+	<select id="myHeartBookList" resultMap="bookResultSet">
+		select *
+		from v_book
+			 join heart using(isbn)
+		where m_no = ${mNo}	 
+	</select>
+	
+</mapper>

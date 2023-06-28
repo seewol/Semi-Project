@@ -1,0 +1,12 @@
+127.0.0.1 - - [25/Jun/2023:19:24:07 +0900] "GET / HTTP/1.1" 404 807
+127.0.0.1 - - [25/Jun/2023:19:25:15 +0900] "GET / HTTP/1.1" 404 807
+0:0:0:0:0:0:0:1 - - [25/Jun/2023:19:26:39 +0900] "GET /semiHome.do HTTP/1.1" 404 818
+0:0:0:0:0:0:0:1 - - [25/Jun/2023:19:26:39 +0900] "GET /favicon.ico HTTP/1.1" 404 818
+0:0:0:0:0:0:0:1 - - [25/Jun/2023:19:26:47 +0900] "GET / HTTP/1.1" 404 807
+0:0:0:0:0:0:0:1 - - [25/Jun/2023:19:27:32 +0900] "GET /bookmaroo/ HTTP/1.1" 200 7392
+0:0:0:0:0:0:0:1 - - [25/Jun/2023:19:27:33 +0900] "GET /bookmaroo/resources/image/logo.png HTTP/1.1" 200 16068
+0:0:0:0:0:0:0:1 - - [25/Jun/2023:19:27:33 +0900] "GET /bookmaroo/resources/image/bg-masthead.jpg HTTP/1.1" 200 445582
+0:0:0:0:0:0:0:1 - - [25/Jun/2023:19:27:47 +0900] "GET /bookmaroo/loginView.me HTTP/1.1" 200 8696
+0:0:0:0:0:0:0:1 - - [25/Jun/2023:19:27:47 +0900] "GET /bookmaroo/resources/image/kakao_login_medium_wide.png HTTP/1.1" 200 3307
+0:0:0:0:0:0:0:1 - - [25/Jun/2023:19:28:07 +0900] "GET /bookmaroo/loginView.me HTTP/1.1" 200 8696
+0:0:0:0:0:0:0:1 - - [25/Jun/2023:19:28:36 +0900] "POST /bookmaroo/login.me HTTP/1.1" 500 2169

@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="adminMapper">
+	<insert id="insertBook">
+		INSERT INTO BOOK
+		VALUES(#{ isbn }, #{ title }, #{ contents }, #{ gmCode }, 1, #{ authors }, #{ publisher }, #{ datetime }, 1, #{ thumbnail })
+	</insert>
+	
+	<insert id="insertBookDetail">
+		INSERT INTO BOOK_DETAIL
+		VALUES(SEQ_BOOK_NO.NEXTVAL, #{ isbn }, DEFAULT, DEFAULT)
+	</insert>
+	
+	<select id="selectBook" resultMap="bookResultSet">
+		SELECT *
+		FROM BOOK
+		ORDER BY PUBLICATION
+	</select>
+	
+	<select id="getListCount" resultType="_int">
+		SELECT COUNT(*)
+		FROM BOOK
+	</select>
+	
+	<resultMap type="Books" id="bookResultSet">
+		<id column="ISBN" property="isbn"/>
+		<result column="B_NAME" property="title"/>
+		<result column="AUTHOR" property="authors"/>
+		<result column="PUBLISHER" property="publisher"/>
+		<result column="PUBLICATION" property="datetime"/>
+		<result column="SUMMARY" property="contents"/>
+		<result column="IS_RENTAL" property="isRental"/>
+		<result column="B_IMAGE" property="thumbnail"/>
+		<result column="GM_CODE" property="gmCode"/>
+	</resultMap>
+	
+	<select id="searchBookTitle" resultMap="bookResultSet">
+		SELECT *
+		FROM BOOK
+			 JOIN BOOK_DETAIL USING(ISBN)
+		WHERE B_NAME LIKE '%${ keyword }%'
+	</select>
+	
+	<select id="searchBookAuthors" resultMap="bookResultSet">
+		SELECT *
+		FROM BOOK
+			 JOIN BOOK_DETAIL USING(ISBN)
+		WHERE AUTHOR LIKE '%${ keyword }%'
+	</select>
+	
+	<select id="searchBookIsbn" resultMap="bookResultSet">
+		SELECT *
+		FROM BOOK
+			 JOIN BOOK_DETAIL USING(ISBN)
+		WHERE ISBN LIKE '%${ keyword }%'
+	</select>
+	
+	<select id="searchBookStatus" resultMap="bookResultSet">
+		SELECT *
+		FROM BOOK
+			 JOIN BOOK_DETAIL USING(ISBN)
+		WHERE IS_RENTAL LIKE '%${ keyword }%'
+		ORDER BY B_NAME
+	</select>
+	
+	<update id="updateBook">
+		UPDATE BOOK
+		SET B_NAME = #{ title },
+			AUTHOR = #{ authors },
+			PUBLISHER = #{ publisher },
+			PUBLICATION = SUBSTR(#{ datetime }, 0, 10),
+			SUMMARY = #{ contents },
+			B_IMAGE = #{ thumbnail }
+		WHERE ISBN = #{ isbn }
+	</update>
+	
+	<delete id="deleteBook">
+		DELETE FROM BOOK_DETAIL
+		WHERE ISBN = #{ isbn }
+	</delete>
+	
+	<select id="searchReviewTitle" resultMap="reviewResultSet">
+		SELECT *
+		FROM REVIEW
+			 JOIN MEMBER USING(M_NO)
+		WHERE REVIEW_TITLE LIKE '%${ keyword }%'
+		ORDER BY REVIEW_UPDATE_DATE DESC
+	</select>
+	
+	<select id="searchReviewNo" resultMap="reviewResultSet">
+		SELECT *
+		FROM REVIEW
+			 JOIN MEMBER USING(M_NO)
+		WHERE REVIEW_NO LIKE '%${ keyword }%'
+		ORDER BY REVIEW_UPDATE_DATE DESC
+	</select>
+	
+	<select id="searchMemberId" resultMap="reviewResultSet">
+		SELECT *
+		FROM REVIEW
+			 JOIN MEMBER USING(M_NO)
+		WHERE M_NAME LIKE '%${ keyword }%'
+		ORDER BY REVIEW_UPDATE_DATE DESC
+	</select>
+	
+	<resultMap type="Review" id="reviewResultSet">
+		<id column="REVIEW_NO" property="reviewNo"/>
+		<result column="REVIEW_TITLE" property="reviewTitle"/>
+		<result column="REVIEW_CONTENT" property="reviewContent"/>
+		<result column="REVIEW_UPDATE_DATE" property="reviewUpdateDate"/>
+		<result column="REVIEW_VIEWS" property="reviewViews"/>
+		<result column="STAR_RATING" property="starRating"/>
+		<result column="REVIEW_BOOK_ISBN" property="reviewBookIsbn"/>
+		<result column="M_NAME" property="memberId"/>
+	</resultMap>
+	
+	<delete id="deleteReview">
+		DELETE FROM REVIEW
+		WHERE REVIEW_NO = #{ reviewNo }
+	</delete>
+	
+	<update id="updateUser1">
+		UPDATE MEMBER
+		SET IS_ADMIN = '0'
+		WHERE M_NO = #{ memberNo }
+	</update>
+	
+	<update id="updateUser2">
+		UPDATE MEMBER
+		SET IS_ADMIN = '1'
+		WHERE M_NO = #{ memberNo }
+	</update>
+	
+	<select id="searchUserMemberId" resultMap="userResultSet">
+		SELECT *
+		FROM MEMBER
+		WHERE M_ID LIKE '%${ keyword }%'
+		ORDER BY ENROLLDATE DESC
+	</select>
+	
+	<select id="searchUserMemberName" resultMap="userResultSet">
+		SELECT *
+		FROM MEMBER
+		WHERE M_NAME LIKE '%${ keyword }%'
+		ORDER BY ENROLLDATE DESC
+	</select>
+	
+	<select id="searchUserIsAdmin" resultMap="userResultSet">
+		SELECT *
+		FROM MEMBER
+		WHERE IS_ADMIN LIKE #{ keyword }
+		ORDER BY ENROLLDATE DESC
+	</select>
+	
+	<resultMap type="User" id="userResultSet">
+		<id column="M_NO" property="memberNo"/>
+		<result column="M_ID" property="memberId"/>
+		<result column="PASSWORD" property="password"/>
+		<result column="M_NAME" property="memberName"/>
+		<result column="PHONE" property="phone"/>
+		<result column="ENROLLDATE" property="enrollDate"/>
+		<result column="IS_RENTAL" property="isRental"/>
+		<result column="IS_ADMIN" property="isAdmin"/>
+		<result column="LOGIN_TYPE" property="loginType"/>
+		<result column="KAKAO_ID" property="kakaoId"/>
+		<result column="M_STATUS" property="memberStatus"/>
+	</resultMap>
+	
+	<select id="searchWishTitle" resultMap="wishResultSet">
+		SELECT *
+		FROM BOOK_WISH
+			 JOIN MEMBER USING(M_NO)
+		WHERE W_TITLE LIKE '%${ keyword }%'
+	</select>
+	
+	<select id="searchWishAuthors" resultMap="wishResultSet">
+		SELECT *
+		FROM BOOK_WISH
+			 JOIN MEMBER USING(M_NO)
+		WHERE W_AUTHOR LIKE '%${ keyword }%'
+	</select>
+	
+	<select id="searchWishMemberId" resultMap="wishResultSet">
+		SELECT *
+		FROM BOOK_WISH
+			 JOIN MEMBER USING(M_NO)
+		WHERE M_ID LIKE '%${ keyword }%'
+	</select>
+	
+	<resultMap type="Wishes" id="wishResultSet">
+		<id column="W_NO" property="wishNo"/>
+		<result column="M_NO" property="memberNo"/>
+		<result column="W_TITLE" property="wishTitle"/>
+		<result column="W_AUTHOR" property="wishAuthor"/>
+		<result column="W_PUBLISHER" property="wishPublisher"/>
+		<result column="W_PRICE" property="wishPrice"/>
+		<result column="W_ETC" property="wishEtc"/>
+		<result column="W_PUBLICATION" property="wishPublication"/>
+		<result column="M_ID" property="memberId"/>
+	</resultMap>
+	
+	<delete id="deleteWish">
+		DELETE BOOK_WISH
+		WHERE W_NO = #{ keyword }
+	</delete>	
+</mapper>

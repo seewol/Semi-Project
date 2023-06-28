@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="adminGuideMapper">
+	
+	<select id="getListCount" resultType="_int">
+		select count(*)
+		from faq
+	</select>
+	
+	<select id="selectFAQList" resultMap="FAQResultSet">
+		select *
+		from faq
+		order by q_no desc
+	</select>
+	
+	<resultMap type="FAQ" id="FAQResultSet">
+		<id column="Q_NO" property="faqNumber"/>
+		<result column="M_NO" property="memberNumber"/>
+		<result column="Q_QUESTION" property="faqQuestion"/>
+		<result column="Q_ANSWER" property="faqAnswer"/>
+		<result column="Q_DATE" property="faqDate"/>
+	</resultMap>
+	
+	<select id="selectFAQSearchList" resultMap="FAQResultSet">
+		select *
+		from faq
+		<if test="category == 'all'">
+			where q_question like '%${query}%' or q_answer like '%${query}%'
+		</if>
+		<if test="category != 'all'">
+			where ${category} like '%${query}%'
+		</if>
+		order by q_no desc
+	</select>
+	
+	<select id="getSearchListCount" resultType="_int">
+		select count(*)
+		from faq
+		<if test="category == 'all'">
+			where q_question like '%${query}%' or q_answer like '%${query}%'
+		</if>
+		<if test="category != 'all'">
+			where ${category} like '%${query}%'
+		</if>
+	</select>
+	
+	
+	<select id="getFAQinfo" resultMap="FAQResultSet">
+		select *
+		from faq
+		where q_no = #{faqNo}
+	</select>
+	
+	<update id="updateFAQinfo">
+		update faq
+		set q_question = #{faqQuestion},
+			q_answer = #{faqAnswer},
+			q_date = sysdate
+		where q_no = #{faqNumber}
+	</update>
+	
+	<delete id="deleteFAQinfo">
+		delete from faq
+		where q_no = ${faqNo}
+	</delete>
+	
+	
+	<!-- 		values(#{faqNumber}, 1005, #{faqQuestion}, #{faqAnswer}, sysdate) -->
+	<insert id="insertFAQinfo">
+		insert into faq
+		values(SEQ_BOARD_NO.NEXTVAL, #{mNo}, #{faqQuestion}, #{faqAnswer}, sysdate)
+	</insert>
+	
+</mapper>
