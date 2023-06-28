@@ -1,8 +1,0 @@
-INDEX VERSION 1.4+C:\Project\Bookmaroo\.metadata\.plugins\org.eclipse.wst.jsdt.core\indexes
-1091865506.index
-836273559.index
-1678752655.index
-2653896927.index
-753254582.index
-1718799965.index
-2795286991.index
