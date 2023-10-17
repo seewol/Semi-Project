@@ -55,10 +55,10 @@
 				<li><a href="${ contextPath }/signUp.me">회원가입</a></li>
 			</c:if>
 			<c:if test="${ !empty loginUser }">
-				<c:if test="${ empty loginUser.kakaoId }">
+				<c:if test="${ loginUser.kakaoId == 0 }">
 					<a href="${ contextPath }/logout.me" style="text-decoration: none; color:black; font-size: 13px; font-weight: bold;">로그아웃</a>
 				</c:if>
-				<c:if test="${ !empty loginUser.kakaoId }">
+				<c:if test="${ loginUser.kakaoId != 0 }">
 					<a href="https://kauth.kakao.com/oauth/logout?client_id=3820ee86989bf11805e157a18f4e15b1&logout_redirect_uri=http://localhost:8099/bookmaroo/logout.me" style="text-decoration: none; color:black; font-size: 13px; font-weight: bold;">로그아웃</a>
 				</c:if>
 			</c:if>

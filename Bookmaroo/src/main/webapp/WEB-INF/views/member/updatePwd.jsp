@@ -104,6 +104,7 @@
 		//● ● ● 현재 비밀번호 일치 여부 확인 ①
 		const password = document.getElementById('password');  // 현재 비밀번호 input
 		const checkPwdResult = document.getElementById('checkPwdResult'); // 현재 비밀번호 일치 여부 노출
+		let exPwd = '';
 		
 		password.addEventListener('change', function(){
 			// 서버로 입력한 비밀번호 보내서 현재 비밀번호와 일치하는지 여부 확인
@@ -117,6 +118,8 @@
 						password.style.color = '#4373E6';
 						checkPwdResult.style.color = '#4373E6';
 						checkPwdResult.innerText = '🍀비밀번호 확인이 일치합니다.';
+						exPwd = password.value.trim();
+						// console.log(exPwd);
 						currentPwd = true;
 						if(currentPwd && newPwd1 && newPwd2){
 							$('#update').attr('disabled', false);
@@ -147,6 +150,11 @@
 			if(this.value.trim() == ''){
 				newPwdResult.style.color = '#DC6089';
 				newPwdResult.innerText ='변경할 비밀번호를 입력해주세요.';
+				newPwd1 = false;
+				$('#update').attr('disabled', true);
+			} else if(this.value.trim() == exPwd){
+				newPwdResult.style.color = '#DC6089';
+				newPwdResult.innerText ='현재 비밀번호와 다르게 입력해주세요.';
 				newPwd1 = false;
 				$('#update').attr('disabled', true);
 			} else if(!reg.test(this.value.trim())){
