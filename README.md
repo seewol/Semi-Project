@@ -1,6 +1,6 @@
 ## 🔖 kh에서 세미 프로젝트로 진행한 도서관 플랫폼 '책마루' 입니다.
 
-[👉🏻 회원 관련 기능 시연 영상 (click!)]('https://github.com/seewol/Semi-Project.git', "영상 보기")  
+[👉🏻회원 관련 기능 시연 영상 (click!)]('https://github.com/seewol/Semi-Project.git', "영상 보기")
 
 ### 「구현 기능」
 
